@@ -68,8 +68,8 @@ __vector_table
         DCD     SVC_Handler               ; SVCall Handler
         DCD     DebugMon_Handler          ; Debug Monitor Handler
         DCD     0                         ; Reserved
-        DCD     OS_CPU_PendSVHandler             ; PendSV Handler
-        DCD     OS_CPU_SysTickHandler            ; SysTick Handler
+        DCD     PendSV_Handler             ; PendSV Handler
+        DCD     SysTick_Handler            ; SysTick Handler
 
          ; External Interrupts
         DCD     WWDG_IRQHandler                   ; Window WatchDog                                        
@@ -231,15 +231,15 @@ SVC_Handler
 DebugMon_Handler
         B DebugMon_Handler
 
-        PUBWEAK OS_CPU_PendSVHandler 
+        PUBWEAK PendSV_Handler 
         SECTION .text:CODE:NOROOT:REORDER(1)
-OS_CPU_PendSVHandler 
-        B OS_CPU_PendSVHandler 
+PendSV_Handler 
+        B PendSV_Handler 
 
-        PUBWEAK OS_CPU_SysTickHandler 
+        PUBWEAK SysTick_Handler 
         SECTION .text:CODE:NOROOT:REORDER(1)
-OS_CPU_SysTickHandler 
-        B OS_CPU_SysTickHandler 
+SysTick_Handler 
+        B SysTick_Handler 
 
         PUBWEAK WWDG_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)

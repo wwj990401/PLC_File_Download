@@ -105,3 +105,51 @@ u8 Get_DCahceSta(void)
     sta=((SCB->CCR)>>16)&0X01;
     return sta;
 }
+
+
+
+void WFI_SET(void)
+
+{
+
+       asm("WFI");           
+
+}
+
+//关闭所有中断(但是不包括fault和NMI中断)
+
+void INTX_DISABLE(void)
+
+{            
+
+    asm("CPSID   I");
+
+    asm("BX      LR");    
+
+}
+
+//开启所有中断
+
+void INTX_ENABLE(void)
+
+{
+
+    asm("CPSIE   I"); 
+
+    asm("BX      LR");    
+
+}
+
+//设置栈顶地址
+
+//addr:栈顶地址
+
+void MSR_MSP(u32 addr)
+
+{
+
+    asm("MSR MSP, r0");    //set Main Stack value
+
+    asm("BX r14");     
+
+}

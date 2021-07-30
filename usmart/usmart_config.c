@@ -5,6 +5,7 @@
 #include "delay.h"	 
 #include "malloc.h"
 #include "led.h"
+#include "lan8720.h"
 
 
 //函数名列表初始化(用户自己添加)
@@ -16,6 +17,7 @@ struct _m_usmart_nametab usmart_nametab[]=
 	(void*)write_addr,"void write_addr(u32 addr,u32 val)",	 
 #endif		     
         (void*)led_out,"void led_out(int n)",
+        (void*)LAN8720_ReadPHY,"u32 LAN8720_ReadPHY(u16 reg)",
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

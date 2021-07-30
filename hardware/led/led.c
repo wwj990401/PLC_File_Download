@@ -26,7 +26,7 @@ void LED_Init(void)
     HAL_GPIO_Init(GPIOF,&GPIO_Initure);
 	
     HAL_GPIO_WritePin(GPIOF,GPIO_PIN_6,GPIO_PIN_SET);	//PF6÷√1
-    HAL_GPIO_WritePin(GPIOF,GPIO_PIN_1,GPIO_PIN_SET);	//PF8÷√1 
+    HAL_GPIO_WritePin(GPIOF,GPIO_PIN_8,GPIO_PIN_SET);	//PF8÷√1 
 }
 
 void led_out(int n)
