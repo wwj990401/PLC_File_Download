@@ -3,6 +3,13 @@
 
 #include "includes.h"
 #include "led.h"
+#include "sys.h"
+#include "delay.h"
+#include "usart.h"
+#include "led.h"
+#include "sdram.h"
+#include "malloc.h"
+#include "usmart.h"
 
 
 //START 任务
@@ -25,5 +32,14 @@ OS_STK LEDA_TASK_STK[LEDA_STK_SIZE];
 //任务函数
 void ledA_task(void *pdata);
 
+//LEDB任务
+//设置任务优先级
+#define LEDB_TASK_PRIO			8
+//设置任务堆栈大小
+#define LEDB_STK_SIZE			128
+//任务堆栈
+OS_STK LEDB_TASK_STK[LEDB_STK_SIZE];
+//任务函数
+void ledB_task(void *pdata);
 
 #endif

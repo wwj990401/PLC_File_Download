@@ -2372,12 +2372,6 @@
     <group>
         <name>app</name>
         <file>
-            <name>$PROJ_DIR$\..\app\led.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\app\led.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\app\main.c</name>
         </file>
         <file>
@@ -2393,20 +2387,20 @@
             <name>$PROJ_DIR$\..\app\stm32f7xx_hal_conf.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\app\sys.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\app\sys.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\app\system_stm32f7xx.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\app\system_stm32f7xx.h</name>
         </file>
     </group>
     <group>
         <name>cmsis</name>
+        <file>
+            <name>$PROJ_DIR$\..\cmsis\cmsis_armcc.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\cmsis\cmsis_compiler.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\cmsis\cmsis_iccarm.h</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\cmsis\core_cm7.h</name>
         </file>
@@ -2419,6 +2413,9 @@
         <file>
             <name>$PROJ_DIR$\..\cmsis\core_cmSimd.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\cmsis\mpu_armv7.h</name>
+        </file>
     </group>
     <group>
         <name>drivers</name>
@@ -2427,6 +2424,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_cortex.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_dma.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_exti.c</name>
@@ -2443,11 +2443,53 @@
         <file>
             <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_rcc.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_sdram.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_tim.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_uart.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_usart.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_ll_fmc.c</name>
+        </file>
+    </group>
+    <group>
+        <name>hardware</name>
+        <file>
+            <name>$PROJ_DIR$\..\hardware\led\led.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\hardware\sdram\sdram.c</name>
+        </file>
     </group>
     <group>
         <name>iar</name>
         <file>
             <name>$PROJ_DIR$\startup_stm32f765xx.s</name>
+        </file>
+    </group>
+    <group>
+        <name>malloc</name>
+        <file>
+            <name>$PROJ_DIR$\..\malloc\malloc.c</name>
+        </file>
+    </group>
+    <group>
+        <name>system</name>
+        <file>
+            <name>$PROJ_DIR$\..\system\delay\delay.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\system\sys\sys.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\system\usart\usart.c</name>
         </file>
     </group>
     <group>
@@ -2515,5 +2557,17 @@
                 <name>$PROJ_DIR$\..\ucos\PORT\os_cpu_c.c</name>
             </file>
         </group>
+    </group>
+    <group>
+        <name>usmart</name>
+        <file>
+            <name>$PROJ_DIR$\..\usmart\usmart.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\usmart\usmart_config.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\usmart\usmart_str.c</name>
+        </file>
     </group>
 </project>
