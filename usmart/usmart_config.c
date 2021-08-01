@@ -2,12 +2,11 @@
 #include "usmart_str.h"
 ////////////////////////////用户配置区///////////////////////////////////////////////
 //这下面要包含所用到的函数所申明的头文件(用户自己添加) 
-#include "delay.h"	 
-#include "malloc.h"
+#include "delay.h"	 	
+#include "sys.h"
 #include "led.h"
 #include "lan8720.h"
-
-
+								 									  
 //函数名列表初始化(用户自己添加)
 //用户直接在这里输入要执行的函数名及其查找串
 struct _m_usmart_nametab usmart_nametab[]=
@@ -15,9 +14,9 @@ struct _m_usmart_nametab usmart_nametab[]=
 #if USMART_USE_WRFUNS==1 	//如果使能了读写操作
 	(void*)read_addr,"u32 read_addr(u32 addr)",
 	(void*)write_addr,"void write_addr(u32 addr,u32 val)",	 
-#endif		     
+#endif		   
         (void*)led_out,"void led_out(int n)",
-        (void*)LAN8720_ReadPHY,"u32 LAN8720_ReadPHY(u16 reg)",
+        (void*)LAN8720_ReadPHY,"u32 LAN8720_ReadPHY(u16 reg)",						
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

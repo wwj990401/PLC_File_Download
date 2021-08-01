@@ -38,7 +38,6 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "stm32f7xx_it.h"
    
 /** @addtogroup STM32F7xx_HAL_Examples
@@ -140,24 +139,24 @@ void DebugMon_Handler(void)
 {
 }
 
-/**
-  * @brief  This function handles PendSVC exception.
-  * @param  None
-  * @retval None
-  */
-void PendSV_Handler(void)
-{
-}
-
 ///**
-//  * @brief  This function handles SysTick Handler.
+//  * @brief  This function handles PendSVC exception.
 //  * @param  None
 //  * @retval None
 //  */
-void SysTick_Handler(void)
-{
-  HAL_IncTick();
-}
+//void PendSV_Handler(void)
+//{
+//}
+//
+/////**
+////  * @brief  This function handles SysTick Handler.
+////  * @param  None
+////  * @retval None
+////  */
+//void SysTick_Handler(void)
+//{
+//  HAL_IncTick();
+//}
 
 /******************************************************************************/
 /*                 STM32F7xx Peripherals Interrupt Handlers                   */

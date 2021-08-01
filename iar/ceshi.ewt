@@ -2480,16 +2480,7 @@
             <name>$PROJ_DIR$\..\hardware\mpu\mpu.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\hardware\iic\myiic.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\hardware\pcf8574\pcf8574.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\hardware\sdram\sdram.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\hardware\timer\timer.c</name>
         </file>
     </group>
     <group>
@@ -2576,9 +2567,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\lwip\lwip-1.4.1\src\core\ipv4\ip_frag.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\lwip\lwip-1.4.1\src\core\lwip_sys.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\lwip\lwip-1.4.1\src\core\mem.c</name>

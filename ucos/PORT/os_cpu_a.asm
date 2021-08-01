@@ -45,7 +45,7 @@
     PUBLIC  OS_CPU_SR_Restore
     PUBLIC  OSCtxSw
     PUBLIC  OSIntCtxSw
-    PUBLIC  OS_CPU_PendSVHandler
+    PUBLIC  PendSV_Handler
 
 
 ;********************************************************************************************************
@@ -219,12 +219,12 @@ OSIntCtxSw
 ;              therefore safe to assume that context being switched out was using the process stack (PSP).
 ;********************************************************************************************************
 
-OS_CPU_PendSVHandler
+PendSV_Handler
     CPSID   I                                                   ; Prevent interruption during context switch
     MRS     R0, PSP                                             ; PSP is process stack pointer
 
     CMP     R0, #0
-    BEQ     OS_CPU_PendSVHandler_nosave                         ; equivalent code to CBZ from M3 arch to M0 arch
+    BEQ     PendSV_Handler_nosave                         ; equivalent code to CBZ from M3 arch to M0 arch
                                                                 ; Except that it does not change the condition code flags
 
     SUBS    R0, R0, #0x24                                       ; Adjust SP to make space for Low, High & LR registers
@@ -242,7 +242,7 @@ OS_CPU_PendSVHandler
     STMIA   R0!, {R3}                                           ; Store LR (EXC_RETURN) on process stack.
 
                                                                 ; At this point, entire context of process has been saved
-OS_CPU_PendSVHandler_nosave
+PendSV_Handler_nosave
     BL      OSTaskSwHook                                        ; OSTaskSwHook();
 
     LDR     R0, =OSPrioCur                                      ; OSPrioCur = OSPrioHighRdy;

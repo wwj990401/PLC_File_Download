@@ -184,7 +184,7 @@ void       OS_CPU_SysTickInit     (INT32U  cnts);
 void       OS_CPU_SysTickInitFreq (INT32U  cpu_freq);
 
 void       OS_CPU_SysTickHandler  (void);
-void       OS_CPU_PendSVHandler   (void);
+void       PendSV_Handler   (void);
 
 
 /*
