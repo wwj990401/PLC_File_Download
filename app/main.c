@@ -14,9 +14,7 @@ int main(void)
         LED_Init();                     //初始化LED
         SDRAM_Init();                   //初始化SDRAM
         my_mem_init(SRAMIN);		    //初始化内部内存池
-	my_mem_init(SRAMEX);		    //初始化外部内存池
 	my_mem_init(SRAMDTCM);		    //初始化DTCM内存池
-
         //while(1);
 	OSInit();  //UCOS初始化
         while(lwip_comm_init())         //lwip初始化

@@ -137,12 +137,12 @@ u8 lwip_comm_init(void)
 	struct ip_addr gw;      			//默认网关 
 
 	if(ETH_Mem_Malloc())return 1;		//内存申请失败
-	if(lwip_comm_mem_malloc())return 2;	//内存申请失败
+	if(lwip_comm_mem_malloc())return 1;	//内存申请失败
     lwip_comm_default_ip_set(&lwipdev);	//设置默认IP等信息
 	while(LAN8720_Init())		        //初始化LAN8720,如果失败的话就重试5次
     {
         retry++;
-        if(retry>5) {retry=0;return 3;} //LAN8720初始化失败
+        if(retry>5) {retry=0;return 2;} //LAN8720初始化失败
     }
 	tcpip_init(NULL,NULL);				//初始化tcp ip内核,该函数里面会创建tcpip_thread内核任务
 
@@ -160,7 +160,7 @@ u8 lwip_comm_init(void)
 	printf("默认网关..........................%d.%d.%d.%d\r\n",lwipdev.gateway[0],lwipdev.gateway[1],lwipdev.gateway[2],lwipdev.gateway[3]);
 #endif
 	Netif_Init_Flag=netif_add(&lwip_netif,&ipaddr,&netmask,&gw,NULL,&ethernetif_init,&tcpip_input);//向网卡列表中添加一个网口
-	if(Netif_Init_Flag==NULL)return 4;//网卡添加失败 
+	if(Netif_Init_Flag==NULL)return 3;//网卡添加失败 
 	else//网口添加成功后,设置netif为默认值,并且打开netif网口
 	{
 		netif_set_default(&lwip_netif); //设置netif为默认网口
