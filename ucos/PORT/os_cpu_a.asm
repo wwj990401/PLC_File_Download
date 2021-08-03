@@ -133,9 +133,9 @@ OSStartHighRdy
     MSR     PSP, R0
     BL      OSTaskSwHook
 
-    LDR     R0, =OS_CPU_ExceptStkBase                           ; Initialize the MSP to the OS_CPU_ExceptStkBase
-    LDR     R1, [R0]
-    MSR     MSP, R1
+//    LDR     R0, =OS_CPU_ExceptStkBase                           ; Initialize the MSP to the OS_CPU_ExceptStkBase
+//    LDR     R1, [R0]
+//    MSR     MSP, R1
 
     LDR     R0, =OSRunning                                      ; OSRunning = TRUE
     MOVS    R1, #1

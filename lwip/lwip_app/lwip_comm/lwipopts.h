@@ -99,7 +99,7 @@
 #define DEFAULT_THREAD_STACKSIZE        512
 
 //LWIP调试选项
-#define LWIP_DEBUG                    	 0	 //关闭DEBUG选项
+#define LWIP_DEBUG                    	1	 //关闭DEBUG选项
 #define ICMP_DEBUG                      LWIP_DBG_OFF //开启/关闭ICMPdebug
 
 #endif /* __LWIPOPTS_H__ */
