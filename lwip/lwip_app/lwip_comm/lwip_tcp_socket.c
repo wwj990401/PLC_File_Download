@@ -72,7 +72,8 @@ void Socket_task(void *pdata)
         {
                 printf("监听失败\n");
 		OSTaskDel(OS_PRIO_SELF);
-	}        
+	} 
+        
         OS_ENTER_CRITICAL();    //进入临界区(关闭中断)
 	OSTaskCreate(Connect_client_task,(void*)0,(OS_STK*)&CONNECT_TASK_STK[CONNECT_STK_SIZE-1],CONNECT_TASK_PRIO);
         OS_EXIT_CRITICAL();     //退出临界区(开中断)
@@ -88,6 +89,14 @@ void Connect_client_task(void *pdata)
         printf("监听中\r\n");        
 	sock_conn = accept(sock_fd, (struct sockaddr *)&conn_addr, &addr_len);  //等待连接客户端  
 	printf("连接成功\r\n");
+        
+        //设置发送超时
+        int nNetSendTimeout = 10000;
+        setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
+        //设置接收超时
+        int nNetReceiveTimeout = 10000;
+        setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
+        
         OS_ENTER_CRITICAL();    //进入临界区(关闭中断)
 	OSTaskCreate(Rev_file_task,(void*)&sock_conn,(OS_STK*)&REV_TASK_STK[REV_STK_SIZE-1],REV_TASK_PRIO);
         OS_EXIT_CRITICAL();     //退出临界区(开中断)
@@ -130,6 +139,13 @@ void Rev_file_task(void* psock_conn)
                         }
                         else if((receiveData[1]*256+receiveData[2])==0)
                         {
+                                //设置发送超时
+                                int nNetSendTimeout = 3000;
+                                setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
+                                //设置接收超时
+                                int nNetReceiveTimeout = 3000;
+                                setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
+                                
                                 writeAddress=ADDR_FLASH_SECTOR_5;
                                 STMFLASH_EraseSector(writeAddress);
                                 buf[0]=0x00;                    //PLC可开始接收文件
