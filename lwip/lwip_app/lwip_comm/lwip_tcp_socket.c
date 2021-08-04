@@ -110,7 +110,7 @@ void Rev_file_task(void* psock_conn)
         {
                 memset(receiveData, 0, RECV_BUF_SIZE);
                 length = recv(sock_conn, receiveData, RECV_BUF_SIZE, 0);      //接收客户端信息
-                if(length<=0)
+                if(length<=0||length>RECV_BUF_SIZE)
                         break;
                 CRCLo=receiveData[length-2];
                 CRCHi=receiveData[length-1];
@@ -139,7 +139,12 @@ void Rev_file_task(void* psock_conn)
                         {
                                 break;
                         }
-                        else if((receiveData[3]*256+receiveData[4])!=length-7)
+                        else if((receiveData[3]*256+receiveData[4])==188&&((length-7)>344))
+                        {
+                                buf[0]=0x05;                    //超过最大存储内存
+                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
+                        }
+                        else if((receiveData[1]*256+receiveData[2])==length-7)
                         {
                                 buf[0]=0x04;                    //数据帧长度错误
                                 send(sock_conn,buf, 1, 0);      //发送信息给客户端
