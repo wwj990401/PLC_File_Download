@@ -670,7 +670,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>ceshi.hex</state>
+                    <state>Download.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
