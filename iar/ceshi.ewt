@@ -2438,6 +2438,12 @@
             <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_exti.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_flash.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_flash_ex.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\drivers\src\stm32f7xx_hal_gpio.c</name>
         </file>
         <file>
@@ -2481,6 +2487,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\hardware\sdram\sdram.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\hardware\stm32flash\stmflash.c</name>
         </file>
     </group>
     <group>

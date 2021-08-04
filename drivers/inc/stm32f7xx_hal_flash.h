@@ -186,6 +186,10 @@ typedef struct
 #define FLASH_SECTOR_5           ((uint32_t)5U) /*!< Sector Number 5   */
 #define FLASH_SECTOR_6           ((uint32_t)6U) /*!< Sector Number 6   */
 #define FLASH_SECTOR_7           ((uint32_t)7U) /*!< Sector Number 7   */
+#define FLASH_SECTOR_8           ((uint32_t)8U) /*!< Sector Number 8   */
+#define FLASH_SECTOR_9           ((uint32_t)9U) /*!< Sector Number 9   */
+#define FLASH_SECTOR_10          ((uint32_t)10U)/*!< Sector Number 10  */
+#define FLASH_SECTOR_11          ((uint32_t)11U)/*!< Sector Number 11  */
 #endif /* FLASH_SECTOR_TOTAL */
 /**
   * @}
