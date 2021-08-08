@@ -13,7 +13,7 @@
 
 #define PORT 8000
 
-#define RECV_BUF_SIZE 1407
+#define RECV_BUF_SIZE 1405
 
 #define PLC_NUMBER 1
 

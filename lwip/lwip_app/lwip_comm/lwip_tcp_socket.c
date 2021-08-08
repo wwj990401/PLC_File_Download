@@ -109,70 +109,54 @@ void Rev_file_task(void* psock_conn)
         OS_CPU_SR cpu_sr=0;
         
   	u16 length = 0;
-	u8 receiveData[RECV_BUF_SIZE];        //接收数据长度
-        u8 CRCLo;
-        u8 CRCHi;
-        //u16 frameCount=0;                       //接收帧计数
+	u8 receiveData[RECV_BUF_SIZE];          //接收数据长度
         u32 writeAddress;                       //下载地址
         int sock_conn=*((int*)psock_conn);
+        char buf[1];
         while (1) 
         {
                 memset(receiveData, 0, RECV_BUF_SIZE);
                 length = recv(sock_conn, receiveData, RECV_BUF_SIZE, 0);      //接收客户端信息
-                if(length<=0||length>RECV_BUF_SIZE)
+                printf("%d\n",length);
+                if(length<5||length>RECV_BUF_SIZE)
                         break;
-                CRCLo=receiveData[length-2];
-                CRCHi=receiveData[length-1];
-                Generate_crc16_check_code(receiveData,length-2);
-                char buf[1]={0};
-                if(CRCLo!=receiveData[length-2]||CRCHi!=receiveData[length-1])
+                
+                if(receiveData[0]!=PLC_NUMBER)
                 {
-                        buf[0]=0x02;                    //CRC校验失败
+                        buf[0]=0x03;                    //PLC号码错误
+                        send(sock_conn,buf, 1, 0);      //发送信息给客户端
+                }
+                else if((receiveData[1]*256+receiveData[2])==0)
+                {
+                        //设置发送超时
+                        int nNetSendTimeout = 3000;
+                        setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
+                        //设置接收超时
+                        int nNetReceiveTimeout = 3000;
+                        setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
+                        
+                        writeAddress=ADDR_FLASH_SECTOR_5;
+                        STMFLASH_EraseSector(writeAddress);
+                        buf[0]=0x00;                    //PLC可开始接收文件
+                        send(sock_conn,buf, 1, 0);      //发送信息给客户端
+                }
+                else if((receiveData[3]*256+receiveData[4])==188&&((length-5)>344))
+                {
+                        buf[0]=0x05;                    //超过最大存储内存
+                        send(sock_conn,buf, 1, 0);      //发送信息给客户端
+                }
+                else if((receiveData[1]*256+receiveData[2])==length-5)
+                {
+                        buf[0]=0x04;                    //数据帧长度错误
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
                 else
                 {
-                        if(receiveData[0]!=PLC_NUMBER)
-                        {
-                                buf[0]=0x03;                    //PLC号码错误
-                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
-                        }
-                        else if((receiveData[1]*256+receiveData[2])==0)
-                        {
-                                //设置发送超时
-                                int nNetSendTimeout = 3000;
-                                setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
-                                //设置接收超时
-                                int nNetReceiveTimeout = 3000;
-                                setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
-                                
-                                writeAddress=ADDR_FLASH_SECTOR_5;
-                                STMFLASH_EraseSector(writeAddress);
-                                buf[0]=0x00;                    //PLC可开始接收文件
-                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
-                        }
-                        else if(receiveData[1]==0xFF&&receiveData[2]==0xFF)
-                        {
-                                break;
-                        }
-                        else if((receiveData[3]*256+receiveData[4])==188&&((length-7)>344))
-                        {
-                                buf[0]=0x05;                    //超过最大存储内存
-                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
-                        }
-                        else if((receiveData[1]*256+receiveData[2])==length-7)
-                        {
-                                buf[0]=0x04;                    //数据帧长度错误
-                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
-                        }
-                        else
-                        {
-                                writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                                STMFLASH_WriteDate(writeAddress,receiveData+5,length-7);
-                                printf("%s\n",receiveData+5);
-                                buf[0]=0x01;                    //文件接收成功
-                                send(sock_conn,buf, 1, 0);      //发送信息给客户端
-                        }
+                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+                        STMFLASH_WriteDate(writeAddress,receiveData+5,length-5);
+                        printf("%s\n",receiveData+5);
+                        buf[0]=0x01;                    //文件接收成功
+                        send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
         }
         close(sock_conn);         //一次只接收一个连接 

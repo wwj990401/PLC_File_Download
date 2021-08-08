@@ -6,17 +6,17 @@ int main(void)
         MPU_Memory_Protection();        //保护相关存储区域
         Cache_Enable();                 //打开L1-Cache
     
-        HAL_Init();				        //初始化HAL库
+        HAL_Init();			//初始化HAL库
         Stm32_Clock_Init(432,12,2,9);   //设置时钟,216Mhz 
         delay_init(216);                //延时初始化
-	uart_init(115200);		        //串口初始化
-	usmart_dev.init(216); 		    //初始化USMART
+	uart_init(115200);		//串口初始化
+	usmart_dev.init(216); 		//初始化USMART
         LED_Init();                     //初始化LED
         SDRAM_Init();                   //初始化SDRAM
-        my_mem_init(SRAMIN);		    //初始化内部内存池
-	my_mem_init(SRAMDTCM);		    //初始化DTCM内存池
+        my_mem_init(SRAMIN);		//初始化内部内存池
+	my_mem_init(SRAMDTCM);		//初始化DTCM内存池
 
-	OSInit();  //UCOS初始化
+	OSInit();                       //UCOS初始化
         while(lwip_comm_init())         //lwip初始化
 	{
         LED0(0);
