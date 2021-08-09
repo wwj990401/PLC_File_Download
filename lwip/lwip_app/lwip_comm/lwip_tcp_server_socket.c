@@ -28,7 +28,7 @@ OS_STK	REV_TASK_STK[REV_STK_SIZE];
 ////任务优先级
 //#define CHECK_TASK_PRIO	        11
 ////任务堆栈大小
-//#define CHECK_STK_SIZE		128
+//#define CHECK_STK_SIZE		1280
 ////任务堆栈
 //OS_STK	CHECK_TASK_STK[CHECK_STK_SIZE];
 
@@ -96,10 +96,26 @@ void Connect_client_task(void *pdata)
         setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
         
         OS_ENTER_CRITICAL();    //进入临界区(关闭中断)
+//        OSTaskCreate(Check_connect_task,(void*)&sock_conn,(OS_STK*)&CHECK_TASK_STK[CHECK_STK_SIZE-1],CHECK_TASK_PRIO);
 	OSTaskCreate(Rev_file_task,(void*)&sock_conn,(OS_STK*)&REV_TASK_STK[REV_STK_SIZE-1],REV_TASK_PRIO);
         OS_EXIT_CRITICAL();     //退出临界区(开中断)
         OSTaskDel(OS_PRIO_SELF);
 }
+
+////心跳检测
+//void Check_connect_task(void* psock_conn)
+//{
+//        int sock_conn=*((int*)psock_conn);
+//        char buf[1000]={0};
+//        int i;
+//        while(1)
+//        {
+//                printf("正在发送!\n");
+//                i=send(sock_conn,buf, 1000, 0);     //发送信息给客户端 
+//                printf("%d\n",i);
+//                delay_ms(1000);
+//        }
+//}
 
 //接收文件任务
 void Rev_file_task(void* psock_conn)
