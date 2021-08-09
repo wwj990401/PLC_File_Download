@@ -17,7 +17,7 @@
 #include "lwip/netif.h"
 #include "lwip_comm.h"
 #include "lwipopts.h"
-#include "lwip_tcp_socket.h"
+#include "lwip_tcp_server_socket.h"
 
 
 //START хннЯ
