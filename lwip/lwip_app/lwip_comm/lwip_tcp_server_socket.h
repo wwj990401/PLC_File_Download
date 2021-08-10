@@ -29,8 +29,6 @@ void Socket_task(void *pdata);
 
 void Connect_client_task(void *pdata);
 
-//void Check_connect_task(void *sock_conn);
-
 void Rev_file_task(void *sock_conn);
 
 #endif

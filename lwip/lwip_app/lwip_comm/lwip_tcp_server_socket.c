@@ -24,14 +24,6 @@ OS_STK	CONNECT_TASK_STK[CONNECT_STK_SIZE];
 //任务堆栈
 OS_STK	REV_TASK_STK[REV_STK_SIZE];
 
-////检查网络任务
-////任务优先级
-//#define CHECK_TASK_PRIO	        11
-////任务堆栈大小
-//#define CHECK_STK_SIZE		1280
-////任务堆栈
-//OS_STK	CHECK_TASK_STK[CHECK_STK_SIZE];
-
 int sock_fd;		//服务器套接字
 int sock_conn;	        //客户端套接字
 
@@ -88,34 +80,21 @@ void Connect_client_task(void *pdata)
 	sock_conn = accept(sock_fd, (struct sockaddr *)&conn_addr, &addr_len);  //等待连接客户端  
 	printf("连接成功\r\n");
         
-        //设置发送超时
-        int nNetSendTimeout = 10000;
-        setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
-        //设置接收超时
-        int nNetReceiveTimeout = 10000;
-        setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
+        int val = SO_KEEPALIVE;                 //开启心跳帧检测
+        setsockopt(sock_conn, SOL_SOCKET, SO_KEEPALIVE, &val, 4); 
+        int keepIdle = 3;                       //首次探测开始前的tcp无数据收发空闲时间
+        int keepInterval = 1;                   //每次探测的间隔时间
+        int keepCount = 2;                      //探测次数
+        setsockopt(sock_conn, IPPROTO_TCP, TCP_KEEPIDLE, (void *)&keepIdle, sizeof(keepIdle)); 
+        setsockopt(sock_conn, IPPROTO_TCP,TCP_KEEPINTVL, (void *)&keepInterval, sizeof(keepInterval)); 
+        setsockopt(sock_conn,IPPROTO_TCP, TCP_KEEPCNT, (void *)&keepCount, sizeof(keepCount));
         
         OS_ENTER_CRITICAL();    //进入临界区(关闭中断)
-//        OSTaskCreate(Check_connect_task,(void*)&sock_conn,(OS_STK*)&CHECK_TASK_STK[CHECK_STK_SIZE-1],CHECK_TASK_PRIO);
 	OSTaskCreate(Rev_file_task,(void*)&sock_conn,(OS_STK*)&REV_TASK_STK[REV_STK_SIZE-1],REV_TASK_PRIO);
         OS_EXIT_CRITICAL();     //退出临界区(开中断)
         OSTaskDel(OS_PRIO_SELF);
 }
 
-////心跳检测
-//void Check_connect_task(void* psock_conn)
-//{
-//        int sock_conn=*((int*)psock_conn);
-//        char buf[1000]={0};
-//        int i;
-//        while(1)
-//        {
-//                printf("正在发送!\n");
-//                i=send(sock_conn,buf, 1000, 0);     //发送信息给客户端 
-//                printf("%d\n",i);
-//                delay_ms(1000);
-//        }
-//}
 
 //接收文件任务
 void Rev_file_task(void* psock_conn)
@@ -134,7 +113,10 @@ void Rev_file_task(void* psock_conn)
                 memset(receiveData, 0, RECV_BUF_SIZE);
                 newLength = recv(sock_conn, receiveData, RECV_BUF_SIZE, 0);      //接收客户端信息
                 if(newLength <= 0 || newLength > RECV_BUF_SIZE)
+                {
+                        printf("%d\n",newLength);
                         break;
+                }
                 
                 lastLength=newLength;
                 while(newLength < 5)                                            //确保接收报头完整
@@ -168,14 +150,7 @@ void Rev_file_task(void* psock_conn)
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
                 else if((receiveData[1]*256+receiveData[2])==0)
-                {
-                        //设置发送超时
-                        int nNetSendTimeout = 3000;
-                        setsockopt(sock_conn, SOL_SOCKET, SO_SNDTIMEO, (char *)&nNetSendTimeout, sizeof(int));
-                        //设置接收超时
-                        int nNetReceiveTimeout = 3000;
-                        setsockopt(sock_conn, SOL_SOCKET, SO_RCVTIMEO, (char *)&nNetReceiveTimeout, sizeof(int));
-                        
+                {                       
                         writeAddress=ADDR_FLASH_SECTOR_5;
                         STMFLASH_EraseSector(writeAddress);
                         buf[0]=0x00;                    //PLC可开始接收文件
@@ -195,7 +170,6 @@ void Rev_file_task(void* psock_conn)
                 {
                         writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
                         STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        printf("%s\n",receiveData+5);
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
