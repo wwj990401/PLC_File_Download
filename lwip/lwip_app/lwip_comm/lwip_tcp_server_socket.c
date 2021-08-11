@@ -156,12 +156,12 @@ void Rev_file_task(void* psock_conn)
                         buf[0]=0x00;                    //PLC可开始接收文件
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
-                else if((receiveData[1]*256+receiveData[2])==newLength-5)
+                else if((receiveData[3]*256+receiveData[4])!=newLength-5)
                 {
                         buf[0]=0x04;                    //数据帧长度错误
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
                 }
-                else if((receiveData[3]*256+receiveData[4])==188&&((newLength-5)>344))
+                else if((receiveData[1]*256+receiveData[2])==188&&((newLength-5)>344))
                 {
                         buf[0]=0x05;                    //超过最大存储内存
                         send(sock_conn,buf, 1, 0);      //发送信息给客户端
