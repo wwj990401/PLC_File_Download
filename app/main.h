@@ -22,7 +22,7 @@
 
 //START 任务
 //设置任务优先级
-#define START_TASK_PRIO			15  ///开始任务的优先级为最低
+#define START_TASK_PRIO			17  ///开始任务的优先级为最低
 //设置任务堆栈大小
 #define START_STK_SIZE			128
 //任务任务堆栈
@@ -32,7 +32,7 @@ void Start_task(void *pdata);
 
 //LEDA任务
 //设置任务优先级
-#define LEDA_TASK_PRIO			14
+#define LEDA_TASK_PRIO			16
 //设置任务堆栈大小
 #define LEDA_STK_SIZE			128
 //任务堆栈

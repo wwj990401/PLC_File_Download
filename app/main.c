@@ -44,7 +44,6 @@ void Start_task(void *pdata)
 //LEDAÈÎÎñ
 void LedA_task(void *pdata)
 {
-        Socket_init();
 	while(1)
 	{
             OSTimeDlyHMSM(0,0,0,100);

@@ -6,6 +6,8 @@
 #include "sys.h"
 #include "led.h"
 #include "lan8720.h"
+#include "lwip_tcp_client_socket.h"
+#include "lwip_tcp_server_socket.h"
 								 									  
 //函数名列表初始化(用户自己添加)
 //用户直接在这里输入要执行的函数名及其查找串
@@ -16,7 +18,13 @@ struct _m_usmart_nametab usmart_nametab[]=
 	(void*)write_addr,"void write_addr(u32 addr,u32 val)",	 
 #endif		   
         (void*)led_out,"void led_out(int n)",
-        (void*)LAN8720_ReadPHY,"u32 LAN8720_ReadPHY(u16 reg)",						
+        (void*)LAN8720_ReadPHY,"u32 LAN8720_ReadPHY(u16 reg)",	
+        (void*)Init_Client,"void Init_Client(void)",
+        (void*)Socket_init,"void Socket_init(void)",
+        (void*)Send_File_Name,"void Send_File_Name(char* fileName)",
+        (void*)Pause_Download,"void Pause_Download(void)",
+        (void*)Continue_Download,"void Continue_Download(void)",
+        (void*)Stop_Download,"void Stop_Download(void)",
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

@@ -2533,6 +2533,9 @@
                 <name>$PROJ_DIR$\..\lwip\lwip_app\lwip_comm\lwip_comm.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\lwip\lwip_app\lwip_comm\lwip_tcp_client_socket.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\lwip\lwip_app\lwip_comm\lwip_tcp_server_socket.c</name>
             </file>
         </group>
