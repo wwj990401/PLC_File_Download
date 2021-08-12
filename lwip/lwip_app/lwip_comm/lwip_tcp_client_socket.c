@@ -32,6 +32,14 @@ OS_STK	REV_SERVER_TASK_STK[REV_SERVER_STK_SIZE];
 //任务堆栈
 OS_STK	SEND_FILENAME_TASK_STK[SEND_FILENAME_STK_SIZE];
 
+//发送文件路径及名字任务
+//任务优先级
+#define STOP_DOWNLOAD_TASK_PRIO	        11
+//任务堆栈大小
+#define STOP_DOWNLOAD_STK_SIZE		128
+//任务堆栈
+OS_STK	STOP_DOWNLOAD_TASK_STK[STOP_DOWNLOAD_STK_SIZE];
+
 int sock_connect;	        //客户端套接字
 char g_fileName[100];           //文件名字及路径
 
@@ -56,7 +64,6 @@ void Init_Client_task(void *pdata)
 		OSTaskDel(OS_PRIO_SELF);
 	}
         printf("\n客户端套接字创建成功!\n");
-        printf("%d\n",sock_connect);
 	OS_ENTER_CRITICAL();    //进入临界区(关闭中断)
 	OSTaskCreate(Connect_Server_task,(void*)0,(OS_STK*)&CONNECT_SERVER_TASK_STK[CONNECT_SERVER_STK_SIZE-1],CONNECT_SERVER_TASK_PRIO);
         OS_EXIT_CRITICAL();     //退出临界区(开中断)
@@ -110,7 +117,7 @@ void Rev_Server_File_task(void *pdata)
         while (1) 
         {
                 memset(receiveData, 0, DATA_MAX_LENGTH);
-                newLength = recv(sock_connect, receiveData, DATA_MAX_LENGTH, 0);      //接收客户端信息
+                newLength = recv(sock_connect, receiveData, DATA_MAX_LENGTH, 0);      //接收服务器信息
                 if(newLength <= 0 || newLength > DATA_MAX_LENGTH)
                 {
                         printf("%d\n",newLength);
@@ -146,31 +153,31 @@ void Rev_Server_File_task(void *pdata)
                 if(receiveData[0]!=1)
                 {
                         buf[0]=0x03;                    //PLC号码错误
-                        send(sock_connect,buf, 1, 0);      //发送信息给客户端
+                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
                 else if((receiveData[1]*256+receiveData[2])==0)
                 {                       
                         writeAddress=ADDR_FLASH_SECTOR_5;
                         STMFLASH_EraseSector(writeAddress);
                         buf[0]=0x00;                    //PLC可开始接收文件
-                        send(sock_connect,buf, 1, 0);      //发送信息给客户端
+                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
                 else if((receiveData[1]*256+receiveData[2])==newLength-5)
                 {
                         buf[0]=0x04;                    //数据帧长度错误
-                        send(sock_connect,buf, 1, 0);      //发送信息给客户端
+                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
                 else if((receiveData[3]*256+receiveData[4])==188&&((newLength-5)>344))
                 {
                         buf[0]=0x05;                    //超过最大存储内存
-                        send(sock_connect,buf, 1, 0);      //发送信息给客户端
+                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
                 else
                 {
                         writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
                         STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
                         buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给客户端
+                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
         }
         close(sock_connect);         //一次只接收一个连接 
@@ -215,11 +222,25 @@ void Pause_Download(void)
 
 //继续下载
 void Continue_Download(void)
-{
+{ 
         OSTaskResume(REV_SERVER_TASK_PRIO);
 }
+
 //停止下载
 void Stop_Download(void)
 {
-        
+        OS_CPU_SR cpu_sr=0;
+        OS_ENTER_CRITICAL();            //进入临界区(关闭中断)
+	OSTaskCreate(Stop_Download_task,(void*)0,(OS_STK*)&STOP_DOWNLOAD_TASK_STK[STOP_DOWNLOAD_STK_SIZE-1],STOP_DOWNLOAD_TASK_PRIO);
+        OS_EXIT_CRITICAL();             //退出临界区(开中断)
+}
+
+//停止下载任务
+void Stop_Download_task(void *pdata)
+{
+        char buffer[1];
+        buffer[0]=0x06;               //停止下载
+        send(sock_connect,buffer, 1, 0);   //发送信息给服务器
+        printf("停止下载\n");
+        OSTaskDel(OS_PRIO_SELF);
 }

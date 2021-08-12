@@ -24,5 +24,6 @@ void Send_File_Name(char* fileName);
 void Pause_Download(void);
 void Continue_Download(void);
 void Stop_Download(void);
+void Stop_Download_task(void *pdata);
 
 #endif
