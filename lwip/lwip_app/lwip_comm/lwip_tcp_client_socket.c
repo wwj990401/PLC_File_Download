@@ -55,6 +55,7 @@ void Init_Client(void)
 //初始化客户端任务
 void Init_Client_task(void *pdata)
 {
+        close(sock_connect);         //一次只接收一个连接 
         OS_CPU_SR cpu_sr=0;
 	//创建客户端套接字
 	sock_connect = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); //客户端套接字
@@ -107,7 +108,7 @@ void Connect_Server_task(void *pdata)
 void Rev_Server_File_task(void *pdata)
 {
         
-  	u16 newLength = 0;
+  	s16 newLength = 0;
         u16 lastLength = 0;
 	u8 receiveData[DATA_MAX_LENGTH];          //接收数据长度
         u8 flag=0;                            //异常标志
@@ -120,7 +121,12 @@ void Rev_Server_File_task(void *pdata)
                 newLength = recv(sock_connect, receiveData, DATA_MAX_LENGTH, 0);      //接收服务器信息
                 if(newLength <= 0 || newLength > DATA_MAX_LENGTH)
                 {
-                        printf("%d\n",newLength);
+                        if(newLength==0)
+                                printf("文件接收完成\n");
+                        else if(newLength==-1)
+                                printf("网络错误\n");
+                        else
+                                printf("异常错误：%d\n",newLength);
                         break;
                 }
                 
@@ -154,6 +160,7 @@ void Rev_Server_File_task(void *pdata)
                 {
                         buf[0]=0x03;                    //PLC号码错误
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
+                        printf("PLC号码错误!\n");
                 }
                 else if((receiveData[1]*256+receiveData[2])==0)
                 {                       
@@ -161,16 +168,19 @@ void Rev_Server_File_task(void *pdata)
                         STMFLASH_EraseSector(writeAddress);
                         buf[0]=0x00;                    //PLC可开始接收文件
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
+                        printf("正式开始接收文件!\n");
                 }
                 else if((receiveData[1]*256+receiveData[2])==newLength-5)
                 {
                         buf[0]=0x04;                    //数据帧长度错误
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
+                        printf("数据帧长度错误!\n");
                 }
                 else if((receiveData[3]*256+receiveData[4])==188&&((newLength-5)>344))
                 {
                         buf[0]=0x05;                    //超过最大存储内存
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
+                        printf("PLC内存已满!\n");
                 }
                 else
                 {
@@ -181,7 +191,7 @@ void Rev_Server_File_task(void *pdata)
                 }
         }
         close(sock_connect);         //一次只接收一个连接 
-        printf("连接断开\n");
+        printf("连接断开!\n");
         OSTaskDel(OS_PRIO_SELF);
 }
 
@@ -218,12 +228,14 @@ void Send_File_Name(char* fileName)
 void Pause_Download(void)
 {
         OSTaskSuspend(REV_SERVER_TASK_PRIO);
+        printf("暂停下载!\n");
 }
 
 //继续下载
 void Continue_Download(void)
 { 
         OSTaskResume(REV_SERVER_TASK_PRIO);
+        printf("继续下载!\n");
 }
 
 //停止下载
