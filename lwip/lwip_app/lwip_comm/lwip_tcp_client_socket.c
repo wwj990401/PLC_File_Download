@@ -170,13 +170,13 @@ void Rev_Server_File_task(void *pdata)
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("正式开始接收文件!\n");
                 }
-                else if((receiveData[1]*256+receiveData[2])==newLength-5)
+                else if((receiveData[3]*256+receiveData[4])!=newLength-5)
                 {
                         buf[0]=0x04;                    //数据帧长度错误
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("数据帧长度错误!\n");
                 }
-                else if((receiveData[3]*256+receiveData[4])==188&&((newLength-5)>344))
+                else if((receiveData[1]*256+receiveData[2])==188&&((newLength-5)>344))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_6;
                         STMFLASH_EraseSector(writeAddress);
@@ -185,7 +185,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==375&&((newLength-5)>688))
+                else if((receiveData[1]*256+receiveData[2])==375&&((newLength-5)>688))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_7;
                         STMFLASH_EraseSector(writeAddress);
@@ -194,7 +194,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==562&&((newLength-5)>1032))
+                else if((receiveData[1]*256+receiveData[2])==562&&((newLength-5)>1032))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_8;
                         STMFLASH_EraseSector(writeAddress);
@@ -203,7 +203,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==749&&((newLength-5)>1376))
+                else if((receiveData[1]*256+receiveData[2])==749&&((newLength-5)>1376))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_9;
                         STMFLASH_EraseSector(writeAddress);
@@ -212,7 +212,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==937&&((newLength-5)>320))
+                else if((receiveData[1]*256+receiveData[2])==937&&((newLength-5)>320))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_10;
                         STMFLASH_EraseSector(writeAddress);
@@ -221,7 +221,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==1124&&((newLength-5)>664))
+                else if((receiveData[1]*256+receiveData[2])==1124&&((newLength-5)>664))
                 {
                         writeAddress=ADDR_FLASH_SECTOR_11;
                         STMFLASH_EraseSector(writeAddress);
@@ -230,7 +230,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
-                else if((receiveData[3]*256+receiveData[4])==1311&&((newLength-5)>1008))
+                else if((receiveData[1]*256+receiveData[2])==1311&&((newLength-5)>1008))
                 {
                         buf[0]=0x05;                    //超过最大存储内存
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
