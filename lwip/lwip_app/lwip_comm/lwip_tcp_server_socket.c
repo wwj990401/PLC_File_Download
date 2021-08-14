@@ -129,15 +129,18 @@ void Rev_file_task(void* psock_conn)
                         }
                         lastLength=newLength;
                 }
-                while(newLength != (receiveData[3]*256+receiveData[4]+5))       //确保接收了一帧数据
+                if(0!=receiveData[1]*256+receiveData[2])
                 {
-                        newLength=lastLength+recv(sock_conn, receiveData+lastLength, RECV_BUF_SIZE-lastLength, 0);
-                        if(newLength == lastLength || newLength > RECV_BUF_SIZE)
+                        while(newLength != (receiveData[3]*256+receiveData[4]+5))       //确保接收了一帧数据
                         {
-                                flag=1;
-                                break;
+                                newLength=lastLength+recv(sock_conn, receiveData+lastLength, RECV_BUF_SIZE-lastLength, 0);
+                                if(newLength == lastLength || newLength > RECV_BUF_SIZE)
+                                {
+                                        flag=1;
+                                        break;
+                                }
+                                lastLength=newLength;
                         }
-                        lastLength=newLength;
                 }
                 if(flag==1)             //判断接收是否正常                  
                         break;
