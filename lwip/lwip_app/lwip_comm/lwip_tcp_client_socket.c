@@ -42,6 +42,7 @@ OS_STK	STOP_DOWNLOAD_TASK_STK[STOP_DOWNLOAD_STK_SIZE];
 
 int sock_connect;	        //客户端套接字
 char g_fileName[100];           //文件名字及路径
+u32 g_fileSize;                 //文件大小
 
 //创建初始化客户端任务
 void Init_Client(void)
@@ -110,9 +111,9 @@ void Rev_Server_File_task(void *pdata)
         
   	s16 newLength = 0;
         u16 lastLength = 0;
-	u8 receiveData[DATA_MAX_LENGTH];          //接收数据长度
-        u8 flag=0;                            //异常标志
-        u32 writeAddress;                       //下载地址
+	u8 receiveData[DATA_MAX_LENGTH];         //接收数据长度
+        u8 flag=0;                               //异常标志
+        u32 writeAddress;                        //下载地址
         char buf[1];
         
         while (1) 
@@ -141,20 +142,23 @@ void Rev_Server_File_task(void *pdata)
                         }
                         lastLength=newLength;
                 }
-                while(newLength != (receiveData[3]*256+receiveData[4]+5))       //确保接收了一帧数据
+                if(0!=receiveData[1]*256+receiveData[2])
                 {
-                        newLength=lastLength+recv(sock_connect, receiveData+lastLength, DATA_MAX_LENGTH-lastLength, 0);
-                        if(newLength == lastLength || newLength > DATA_MAX_LENGTH)
+                        while(newLength != (receiveData[3]*256+receiveData[4]+5))       //确保接收了一帧数据
                         {
-                                flag=1;
-                                break;
+                                newLength=lastLength+recv(sock_connect, receiveData+lastLength, DATA_MAX_LENGTH-lastLength, 0);
+                                if(newLength == lastLength || newLength > DATA_MAX_LENGTH)
+                                {
+                                        flag=1;
+                                        break;
+                                }
+                                lastLength=newLength;
                         }
-                        lastLength=newLength;
                 }
                 if(flag==1)             //判断接收是否正常                  
                         break;
                 
-                printf("%d\n",newLength);
+                //printf("%d\n",newLength);
                 
                 if(receiveData[0]!=1)
                 {
@@ -166,6 +170,7 @@ void Rev_Server_File_task(void *pdata)
                 {                       
                         writeAddress=ADDR_FLASH_SECTOR_5;
                         STMFLASH_EraseSector(writeAddress);
+                        g_fileSize=receiveData[3]*256+receiveData[4];
                         buf[0]=0x00;                    //PLC可开始接收文件
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("正式开始接收文件!\n");
@@ -243,6 +248,8 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x01;                    //文件接收成功
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                 }
+                if(0!=receiveData[1]*256+receiveData[2])
+                        printf("下载进度: %.4f %%\n",((float)(receiveData[1]*256+receiveData[2])/(float)g_fileSize)*100);
         }
         close(sock_connect);         //一次只接收一个连接 
         printf("连接断开!\n");
