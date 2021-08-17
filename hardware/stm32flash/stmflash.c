@@ -128,7 +128,6 @@ void STMFLASH_EraseSector(u32 WriteAddr)
                 printf("擦除错误\n");	
         }
         SCB_CleanInvalidateDCache();                            //清除无效的D-Cache
-        FLASH_WaitForLastOperation(FLASH_WAITETIME);                //等待上次操作完成
         HAL_FLASH_Lock();           //上锁
 }
 
@@ -136,8 +135,38 @@ void STMFLASH_EraseSector(u32 WriteAddr)
 u32 STMFLASH_WriteDate(u32 WriteAddr,u8 *pBuffer,u16 numToWrite)
 {
         HAL_FLASH_Unlock();	        //解锁
-        u16 number=numToWrite;
-	while(number)       //写数据
+        s16 number=numToWrite;
+        u32 buffer;
+	while(number>3)       //写数据
+	{
+              buffer=(((u32)(*(pBuffer+3)))<<24) + ((*(pBuffer+2))<<16) + ((*(pBuffer+1))<<8) + (*(pBuffer+0));
+		if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,WriteAddr,buffer)!=HAL_OK)//写入数据
+		{ 
+                        printf("写入错误\n");
+			break;	//写入异常
+		}
+		WriteAddr+=4;
+		pBuffer+=4;
+                number-=4;
+	} 
+//        uint64_t buffer;
+//        u32 bufferHigh;
+//        u32 bufferLow;
+//	while(number>7)       //写数据
+//	{
+//                bufferHigh=((*(pBuffer+7))<<24) + ((*(pBuffer+6))<<16) + ((*(pBuffer+5))<<8) + (*(pBuffer+4));
+//                bufferLow=((*(pBuffer+3))<<24) + ((*(pBuffer+2))<<16) + ((*(pBuffer+1))<<8) + (*(pBuffer+0));
+//                buffer=(uint64_t)bufferHigh<<32 + (uint64_t)bufferLow;
+//		if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,WriteAddr,buffer)!=HAL_OK)//写入数据
+//		{ 
+//                        printf("写入错误\n");
+//			break;	//写入异常
+//		}
+//		WriteAddr+=8;
+//		pBuffer+=8;
+//                number-=8;
+//	} 
+        while(number)       //写数据
 	{
 		if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE,WriteAddr,*pBuffer)!=HAL_OK)//写入数据
 		{ 
@@ -147,7 +176,7 @@ u32 STMFLASH_WriteDate(u32 WriteAddr,u8 *pBuffer,u16 numToWrite)
 		WriteAddr++;
 		pBuffer++;
                 number--;
-	} 
+	}
         HAL_FLASH_Lock();           //上锁
         return WriteAddr;
 }
