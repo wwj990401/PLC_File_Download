@@ -123,7 +123,7 @@ void Rev_Server_File_task(void *pdata)
                 if(newLength <= 0 || newLength > DATA_MAX_LENGTH)
                 {
                         if(newLength==0)
-                                printf("文件接收完成\n");
+                                printf("文件接收结束\n");
                         else if(newLength==-1)
                                 printf("网络错误\n");
                         else
@@ -165,6 +165,7 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x03;                    //PLC号码错误
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("PLC号码错误!\n");
+                        break;
                 }
                 else if((receiveData[1]*256+receiveData[2])==0)
                 {                       
@@ -180,66 +181,68 @@ void Rev_Server_File_task(void *pdata)
                         buf[0]=0x04;                    //数据帧长度错误
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("数据帧长度错误!\n");
+                        break;
                 }
                 else if((receiveData[1]*256+receiveData[2])==188&&((newLength-5)>344))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_6;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==375&&((newLength-5)>688))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_7;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==562&&((newLength-5)>1032))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_8;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==749&&((newLength-5)>1376))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_9;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==937&&((newLength-5)>320))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_10;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==1124&&((newLength-5)>664))
-                {
-                        writeAddress=ADDR_FLASH_SECTOR_11;
-                        STMFLASH_EraseSector(writeAddress);
-                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
-                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
-                        buf[0]=0x01;                    //文件接收成功
-                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
-                }
-                else if((receiveData[1]*256+receiveData[2])==1311&&((newLength-5)>1008))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_6;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==375&&((newLength-5)>688))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_7;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==562&&((newLength-5)>1032))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_8;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==749&&((newLength-5)>1376))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_9;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==937&&((newLength-5)>320))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_10;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==1124&&((newLength-5)>664))
+//                {
+//                        writeAddress=ADDR_FLASH_SECTOR_11;
+//                        STMFLASH_EraseSector(writeAddress);
+//                        writeAddress=ADDR_FLASH_SECTOR_5+((receiveData[1]*256+receiveData[2])-1)*1400;
+//                        STMFLASH_WriteDate(writeAddress,receiveData+5,newLength-5);
+//                        buf[0]=0x01;                    //文件接收成功
+//                        send(sock_connect,buf, 1, 0);      //发送信息给服务器
+//                }
+//                else if((receiveData[1]*256+receiveData[2])==1311&&((newLength-5)>1008))
                 {
                         buf[0]=0x05;                    //超过最大存储内存
                         send(sock_connect,buf, 1, 0);      //发送信息给服务器
                         printf("PLC内存已满!\n");
+                        break;
                 }
                 else
                 {
@@ -303,6 +306,7 @@ void Continue_Download(void)
 void Stop_Download(void)
 {
         OS_CPU_SR cpu_sr=0;
+        OSTaskResume(REV_SERVER_TASK_PRIO);
         OS_ENTER_CRITICAL();            //进入临界区(关闭中断)
 	OSTaskCreate(Stop_Download_task,(void*)0,(OS_STK*)&STOP_DOWNLOAD_TASK_STK[STOP_DOWNLOAD_STK_SIZE-1],STOP_DOWNLOAD_TASK_PRIO);
         OS_EXIT_CRITICAL();             //退出临界区(开中断)
